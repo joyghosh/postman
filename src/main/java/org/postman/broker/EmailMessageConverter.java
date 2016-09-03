@@ -1,13 +1,11 @@
 package org.postman.broker;
 
-import java.util.List;
-
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
+
 import org.postman.model.Email;
-import org.postman.model.Fields;
 
 /**
  * 
@@ -17,29 +15,34 @@ import org.postman.model.Fields;
  */
 public class EmailMessageConverter{
 	
-	public static Message toMessage(Object object, JMSContext context) throws JMSException{
-		Email email = (Email)object;
-		MapMessage map = context.createMapMessage();
-		map.setString(Fields.SUBJECT, email.getSubject());
-		map.setString(Fields.BODY, email.getBody());
-		map.setString(Fields.FROM, email.getFrom());
-		map.setObject(Fields.TO, email.getRecipients());
-		map.setObject(Fields.CC, email.cc());
-		map.setObject(Fields.BCC, email.bcc());
-		map.setBoolean(Fields.HTML, email.isHtml());
-		return map;
+	/**
+	 * Converts from <code>Email</code> to <code>Object Message</code> 
+	 * suitable for queue.
+	 * 
+	 * @param email
+	 * @param context
+	 * @return
+	 * @throws JMSException
+	 */
+	public static Message toMessage(Email email, JMSContext context) throws JMSException{
+		ObjectMessage message = context.createObjectMessage(email);
+		return message;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static Object fromMessage(Message message) throws JMSException{
-		MapMessage msg = (MapMessage) message;
-		Email email = new Email(msg.getString(Fields.SUBJECT), 
-								msg.getString(Fields.BODY), 
-								msg.getString(Fields.FROM),
-								(List<String>)msg.getObject(Fields.TO),
-								(List<String>)msg.getObject(Fields.CC), 
-								(List<String>)msg.getObject(Fields.BCC), 
-								msg.getBoolean(Fields.HTML));
-		return email;
+	/**
+	 * Converts from Object message type to Email object.
+	 * 
+	 * @param message to be converted.
+	 * @return Converted Email object.
+	 * @throws JMSException in-case an invalid message object is received.
+	 */
+	public static Email fromMessage(Message message) throws JMSException{
+		Object object = ((ObjectMessage) message).getObject();
+		
+		if(object.getClass().equals(Email.class)){
+			Email email = (Email)object;
+			return email;
+		}
+		throw new JMSException("Not a valid Email message object.");
 	}
 }
