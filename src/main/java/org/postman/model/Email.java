@@ -1,5 +1,6 @@
 package org.postman.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,9 @@ import java.util.List;
  * @since 1.0
  *
  */
-public class Email {
+public class Email implements Serializable{
+	
+	private static final long serialVersionUID = -7033987117091325665L;
 	
 	private String subject;
 	private String body;

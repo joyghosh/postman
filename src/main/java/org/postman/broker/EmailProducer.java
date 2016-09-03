@@ -12,6 +12,7 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -61,7 +62,14 @@ public class EmailProducer {
 		Email email = new Email("test-subject", "test-body", "abc@email.com", recipients, null, null, false);
 		
 		//MapMessage message = (MapMessage) EmailMessageConverter.toMessage(email, context);
-		TextMessage message = context.createTextMessage("Hi there!");
+//		TextMessage message = context.createTextMessage("Hi there!");
+		ObjectMessage message = context.createObjectMessage();
+		try {
+			message.setObject(email);
+		} catch (JMSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		context.createProducer().send(emailQueue, message);
 		
 		return "OK";

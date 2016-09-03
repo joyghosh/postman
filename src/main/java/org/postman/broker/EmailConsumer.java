@@ -6,6 +6,7 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 
 import org.postman.model.Email;
@@ -29,9 +30,11 @@ public class EmailConsumer implements MessageListener{
 			try {
 		//			MapMessage payload = (MapMessage) message;
 		//			Email email = (Email) EmailMessageConverter.fromMessage(payload);
-					TextMessage email = (TextMessage)message;
-					
-						logger.debug((email.getText()).toString());
+					Object object;
+				
+					object = ((ObjectMessage)message).getObject();
+					Email email = (Email) object;
+					logger.debug(email.getBody());
 				} catch (JMSException ex) {
 						// TODO Auto-generated catch block
 						logger.error(ex.getMessage());
