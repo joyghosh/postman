@@ -6,16 +6,10 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -35,13 +29,7 @@ import org.slf4j.LoggerFactory;
 public class EmailProducer {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmailProducer.class);
-	
-//	@Resource(lookup="java:comp/DefaultJMSConnectionFactory")
-//	ConnectionFactory factory;
-//	
-//	@Resource(mappedName=Resources.POSTMAN_EMAIL_QUEUE)
-//	Queue emailQueue;
-	
+		
 	@Resource(lookup=Resources.POSTMAN_EMAIL_QUEUE)
 	private Queue emailQueue;
 	
@@ -52,7 +40,6 @@ public class EmailProducer {
 	@Path("/enqueue")
 	@GET
 	public String enqueEmail(){
-		Connection conn = null;
 		List<String> recipients = new ArrayList<String>();
 		recipients.add("r1@email.com");
 		recipients.add("r2@email.com");
@@ -61,14 +48,11 @@ public class EmailProducer {
 		
 		Email email = new Email("test-subject", "test-body", "abc@email.com", recipients, null, null, false);
 		
-		//MapMessage message = (MapMessage) EmailMessageConverter.toMessage(email, context);
-//		TextMessage message = context.createTextMessage("Hi there!");
 		ObjectMessage message = context.createObjectMessage();
 		try {
 			message.setObject(email);
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (JMSException ex) {
+			logger.error(ex.getMessage());
 		}
 		context.createProducer().send(emailQueue, message);
 		

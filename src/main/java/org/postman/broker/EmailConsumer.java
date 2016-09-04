@@ -1,17 +1,19 @@
 package org.postman.broker;
 
-import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
-import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
 
+import org.postman.InitializationBean;
+import org.postman.actors.messages.EmailMessage;
 import org.postman.model.Email;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import akka.actor.ActorRef;
 
 /**
  * 
@@ -25,19 +27,21 @@ public class EmailConsumer implements MessageListener{
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmailConsumer.class);
 	
+	@EJB
+	InitializationBean init;
+	
 	@Override
 	public void onMessage(Message message) {
-			try {
-		//			MapMessage payload = (MapMessage) message;
-		//			Email email = (Email) EmailMessageConverter.fromMessage(payload);
-					Object object;
+			
+		try {
+				Object object = ((ObjectMessage)message).getObject();
+				Email email = (Email) object;
+				logger.debug(email.getBody());
 				
-					object = ((ObjectMessage)message).getObject();
-					Email email = (Email) object;
-					logger.debug(email.getBody());
-				} catch (JMSException ex) {
-						// TODO Auto-generated catch block
-						logger.error(ex.getMessage());
-				}
+				//Dispatch email job to actor system 
+				init.getMaster().tell(new EmailMessage(email), ActorRef.noSender());
+			}catch (JMSException ex){
+				logger.error(ex.getMessage());
+			}
 	}
 }
