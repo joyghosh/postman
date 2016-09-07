@@ -7,7 +7,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.postman.InitializationBean;
+import org.postman.ActorSystemBean;
 import org.postman.actors.messages.EmailMessage;
 import org.postman.model.Email;
 import org.slf4j.Logger;
@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 import akka.actor.ActorRef;
 
 /**
+ * Email message consumer of queue.
  * 
  * @author Joy Ghosh.
  * @version 1.0
  * @since 1.0
- *
  */
 @MessageDriven(mappedName=Resources.POSTMAN_EMAIL_QUEUE)
 public class EmailConsumer implements MessageListener{
@@ -28,7 +28,7 @@ public class EmailConsumer implements MessageListener{
 	private static final Logger logger = LoggerFactory.getLogger(EmailConsumer.class);
 	
 	@EJB
-	InitializationBean init;
+	ActorSystemBean actorSystem;
 	
 	@Override
 	public void onMessage(Message message) {
@@ -39,7 +39,7 @@ public class EmailConsumer implements MessageListener{
 				logger.debug(email.getBody());
 				
 				//Dispatch email job to actor system 
-				init.getMaster().tell(new EmailMessage(email), ActorRef.noSender());
+				actorSystem.getMaster().tell(new EmailMessage(email), ActorRef.noSender());
 			}catch (JMSException ex){
 				logger.error(ex.getMessage());
 			}

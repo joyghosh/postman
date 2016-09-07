@@ -8,6 +8,7 @@ import javax.jms.ObjectMessage;
 import org.postman.model.Email;
 
 /**
+ * Utility class for message conversion for the message pipeline.
  * 
  * @author Joy Ghosh
  * @version 1.0

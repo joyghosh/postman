@@ -2,6 +2,8 @@ package org.postman;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
@@ -28,13 +30,20 @@ import akka.actor.Props;
  */
 @Startup
 @Singleton
-public class InitializationBean {
+@DependsOn({"PropertiesBean", "Dispatcher"})
+public class ActorSystemBean {
 	
-	private static final Logger logger = LoggerFactory.getLogger(InitializationBean.class);
+	private static final Logger logger = LoggerFactory.getLogger(ActorSystemBean.class);
+	
+	@EJB
+	PropertiesBean properties;
+	
+	@EJB
+	Dispatcher dispatcher;
+	
 	private static ActorSystem system;
 	private static ActorRef listener;
 	private static ActorRef master;
-	private static final int nrOfWorkers = 10;
 	
 	/**
 	 * Initialize the akka actor system at application startup.
@@ -43,7 +52,8 @@ public class InitializationBean {
 	private void init(){
 		system = ActorSystem.create("postman_actor_system");
 		listener = system.actorOf(Props.create(Listener.class), "listener");
-		master = system.actorOf(Props.create(Master.class, nrOfWorkers, listener), "master");
+		master = system.actorOf(Props.create(Master.class, new Integer(properties.getValue(Property.NO_OF_ACTORS)), listener, dispatcher),
+																												"master");
 		
 		logger.debug(listener.path().name());
 		logger.debug(master.path().name());

@@ -18,6 +18,7 @@
   	<logback.version>1.0.13</logback.version>
 	<jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
 	<akka.version>2.3.15</akka.version>
+	<apache-email.version>1.4</apache-email.version>
   </properties>
   
   <dependencies>
@@ -77,6 +78,13 @@
 	  <groupId>com.typesafe.akka</groupId>
 	  <artifactId>akka-actor_2.10</artifactId>
 	  <version>${akka.version}</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-email</artifactId>
+	    <version>${apache-email.version}</version>
 	</dependency>
  </dependencies>
 

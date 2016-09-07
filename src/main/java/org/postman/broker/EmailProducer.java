@@ -18,11 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Rest based email producer. It doesn't actually produces email but enqueues them to message pipeline.
  * 
  * @author Joy Ghosh.
  * @version 1.0
  * @since 1.0
- *
  */
 @Path("/producer")
 @Stateless
@@ -41,10 +41,8 @@ public class EmailProducer {
 	@GET
 	public String enqueEmail(){
 		List<String> recipients = new ArrayList<String>();
-		recipients.add("r1@email.com");
-		recipients.add("r2@email.com");
-		recipients.add("r3@email.com");
-		recipients.add("r4@email.com");
+		recipients.add("james.bond@email.com");
+		recipients.add("bruce.wyane@email.com");
 		
 		Email email = new Email("test-subject", "test-body", "abc@email.com", recipients, null, null, false);
 		

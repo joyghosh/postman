@@ -1,5 +1,6 @@
 package org.postman.actors;
 
+import org.postman.Dispatcher;
 import org.postman.actors.messages.EmailMessage;
 import org.postman.actors.messages.Result;
 import org.slf4j.Logger;
@@ -11,10 +12,10 @@ import akka.routing.RoundRobinPool;
 
 /**
  * Email master actor whose responsibility is dispatch email jobs to worker actors.
+ * 
  * @author Joy Ghosh
  * @version 1.0
  * @since 1.0
- * 
  */
 public class Master extends UntypedActor{
 
@@ -22,10 +23,10 @@ public class Master extends UntypedActor{
 	private final ActorRef workerRouter;
 	private final ActorRef listener;
 	
-	public Master(final int noOfWorkers, final ActorRef listener){
+	public Master(final int noOfWorkers, final ActorRef listener, final Dispatcher dispatcher){
 		this.listener = listener;
 		workerRouter = this.getContext().actorOf(new RoundRobinPool(noOfWorkers)
-						.props(Worker.createWorker()),"workerRouter");
+						.props(Worker.createWorker(dispatcher)),"workerRouter");
 	}
 	
 	@Override

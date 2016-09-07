@@ -1,0 +1,9 @@
+#SMTP configuration.
+smtp.host=
+smtp.port=
+smtp.username=
+smtp.password=
+smtp.ssl=
+
+#Akka actor system.
+akka.actors.no=

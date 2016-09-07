@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Email message for the message pipeline.
  * 
  * @author Joy Ghosh.
  * @version 1.0
  * @since 1.0
- *
  */
 public class Email implements Serializable{
 	
