@@ -4,11 +4,11 @@ import javax.jms.JMSDestinationDefinition;
 import javax.jms.JMSDestinationDefinitions;
 
 /**
- * Resources for email queue. 
+ * Resources for postman. 
+ * 
  * @author Joy Ghosh
  * @version 1.0
  * @since 1.0
- *
  */
 @JMSDestinationDefinitions(
 		@JMSDestinationDefinition(

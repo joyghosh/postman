@@ -10,8 +10,11 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
 import org.postman.model.Email;
 import org.slf4j.Logger;
@@ -36,16 +39,22 @@ public class EmailProducer {
 	@Inject
 	private JMSContext context;
 	
-	
 	@Path("/enqueue")
-	@GET
-	public String enqueEmail(){
+	@POST
+	@Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_FORM_URLENCODED})
+	public String enqueEmail(
+			@FormParam("from") String from, 
+			@FormParam("to") String to,
+			@FormParam("cc") String cc,
+			@FormParam("bcc") String bcc,
+			@FormParam("subject") String subject,
+			@FormParam("content") String content){
+		
 		List<String> recipients = new ArrayList<String>();
-		recipients.add("james.bond@email.com");
-		recipients.add("bruce.wyane@email.com");
-		
-		Email email = new Email("test-subject", "test-body", "abc@email.com", recipients, null, null, false);
-		
+		for(String r:to.split(",")){
+			recipients.add(r);
+		}
+		Email email = new Email(subject, content, from, recipients, null, null, false);
 		ObjectMessage message = context.createObjectMessage();
 		try {
 			message.setObject(email);

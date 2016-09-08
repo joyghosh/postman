@@ -52,7 +52,7 @@ public class ActorSystemBean {
 	private void init(){
 		system = ActorSystem.create("postman_actor_system");
 		listener = system.actorOf(Props.create(Listener.class), "listener");
-		master = system.actorOf(Props.create(Master.class, new Integer(properties.getValue(Property.NO_OF_ACTORS)), listener, dispatcher),
+		master = system.actorOf(Props.create(Master.class, Integer.parseInt(properties.getValue(Property.NO_OF_ACTORS)), listener, dispatcher),
 																												"master");
 		
 		logger.debug(listener.path().name());
